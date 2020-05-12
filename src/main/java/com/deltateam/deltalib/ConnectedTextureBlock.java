@@ -27,24 +27,24 @@ public abstract class ConnectedTextureBlock extends Block {
         return super.getStateContainer();
     }
 
-    BooleanProperty NORTH = BooleanProperty.create("NORTH");
-    BooleanProperty SOUTH = BooleanProperty.create("SOUTH");
-    BooleanProperty EAST = BooleanProperty.create("EAST");
-    BooleanProperty WEST = BooleanProperty.create("WEST");
-    BooleanProperty UP = BooleanProperty.create("UP");
-    BooleanProperty DOWN = BooleanProperty.create("DOWN");
-    BooleanProperty DOWNNORTH = BooleanProperty.create("NORTH_DOWN");
-    BooleanProperty DOWNEAST = BooleanProperty.create("EAST_DOWN");
-    BooleanProperty DOWNWEST = BooleanProperty.create("WEST_DOWN");
-    BooleanProperty DOWNSOUTH = BooleanProperty.create("SOUTH_DOWN");
-    BooleanProperty UPNORTH = BooleanProperty.create("NORTH_UP");
-    BooleanProperty UPEAST = BooleanProperty.create("EAST_UP");
-    BooleanProperty UPWEST = BooleanProperty.create("WEST_UP");
-    BooleanProperty UPSOUTH = BooleanProperty.create("SOUTH_UP");
-    BooleanProperty NORTHEAST = BooleanProperty.create("NORTH_EAST");
-    BooleanProperty SOUTHEAST = BooleanProperty.create("SOUTH_EAST");
-    BooleanProperty NORTHWEST = BooleanProperty.create("NORTH_WEST");
-    BooleanProperty SOUTHWEST = BooleanProperty.create("SOUTH_WEST");
+    BooleanProperty NORTH = BooleanProperty.create("north");
+    BooleanProperty SOUTH = BooleanProperty.create("south");
+    BooleanProperty EAST = BooleanProperty.create("east");
+    BooleanProperty WEST = BooleanProperty.create("west");
+    BooleanProperty UP = BooleanProperty.create("up");
+    BooleanProperty DOWN = BooleanProperty.create("down");
+    BooleanProperty DOWNNORTH = BooleanProperty.create("north_down");
+    BooleanProperty DOWNEAST = BooleanProperty.create("east_down");
+    BooleanProperty DOWNWEST = BooleanProperty.create("west_down");
+    BooleanProperty DOWNSOUTH = BooleanProperty.create("south_down");
+    BooleanProperty UPNORTH = BooleanProperty.create("noth_up");
+    BooleanProperty UPEAST = BooleanProperty.create("east_up");
+    BooleanProperty UPWEST = BooleanProperty.create("west_up");
+    BooleanProperty UPSOUTH = BooleanProperty.create("south_up");
+    BooleanProperty NORTHEAST = BooleanProperty.create("north_east");
+    BooleanProperty SOUTHEAST = BooleanProperty.create("south_east");
+    BooleanProperty NORTHWEST = BooleanProperty.create("north_west");
+    BooleanProperty SOUTHWEST = BooleanProperty.create("south_west");
         Map<Direction, BooleanProperty> FACING_TO_PROPERTY_MAP = (Map) Util.make(Maps.newEnumMap(Direction.class), (p_203421_0_) -> {
             p_203421_0_.put(Direction.NORTH, NORTH);
             p_203421_0_.put(Direction.EAST, EAST);
