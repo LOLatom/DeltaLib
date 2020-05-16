@@ -1,0 +1,9 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "deltalib:block/ctbbase",
+    "textures": {
+       "border": "deltalib:block/ctbtest",
+       "base": "deltalib:block/ctbtestbase",
+       "particle": "#cube"
+    }
+}

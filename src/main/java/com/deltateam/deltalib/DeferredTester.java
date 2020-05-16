@@ -9,5 +9,5 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class DeferredTester {
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS,Deltalib.ModID);
-//    public static RegistryObject<Block> ctbTest = BLOCKS.register("ctbtest",()->new testCTB(Block.Properties.from(Blocks.STONE)));
+    public static RegistryObject<Block> ctbTest = BLOCKS.register("ctbtest",()->new testCTB(Block.Properties.from(Blocks.STONE)));
 }
