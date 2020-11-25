@@ -1,0 +1,17 @@
+{
+  "required": false,
+  "package": "com.tfc.spookyautumnforests.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "spooky_autumn_forests.refmap.json",
+  "client": [
+    "ClientWorldInfoMixin",
+    "WorldTimePacketMixin"
+  ],
+  "mixins": [
+    "AttackPacketMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

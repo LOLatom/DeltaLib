@@ -2,21 +2,8 @@ package com.deltateam.deltalib;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.extensions.IForgeBakedModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -37,10 +24,8 @@ public class Deltalib {
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
-    public static String ModID="deltalib";
 
     public Deltalib() {
-        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
@@ -49,10 +34,7 @@ public class Deltalib {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::bakeModels);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerModels);
 
-        DeferredTester.BLOCKS.register(modEventBus);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -62,37 +44,21 @@ public class Deltalib {
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }
-    
+
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
-//        Minecraft.getInstance().getBlockColors().register(new ConnectedTextureBlock.Model(), DeferredTester.ctbTest.get());
-        RenderType translucent = RenderType.getTranslucent();
-        RenderTypeLookup.setRenderLayer(DeferredTester.ctbTest.get(), translucent);
-    }
-    
-    private void bakeModels(final ModelBakeEvent event) {
-//        IBakedModel mdl=event.getModelRegistry().get(new ResourceLocation("deltalib:ctbtest"));
-//        IBakedModel model=new ConnectedTextureBlock.Model(mdl);
-//        event.getModelRegistry().replace(new ResourceLocation("deltalib:ctbtest"),model);
-    }
-    
-    private void registerModels(final ModelRegistryEvent event) {
-        ModelLoaderRegistry.registerLoader(new ResourceLocation("deltalib:ctb"),new ModelLoader.Loader());
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
         // some example code to dispatch IMC to another mod
-        InterModComms.sendTo("deltalib", "helloworld", () -> {
-            LOGGER.info("Hello world from the MDK");
-            return "Hello world";
-        });
+        InterModComms.sendTo("deltalib", "helloworld", () -> { LOGGER.info("Hello world from the MDK"); return "Hello world";});
     }
 
     private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
         LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m -> m.getMessageSupplier().get()).
+                map(m->m.getMessageSupplier().get()).
                 collect(Collectors.toList()));
     }
 
@@ -105,7 +71,7 @@ public class Deltalib {
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {

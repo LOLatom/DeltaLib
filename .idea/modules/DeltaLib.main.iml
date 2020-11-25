@@ -5,15 +5,13 @@
       <configuration>
         <autoDetectTypes>
           <platformType>FORGE</platformType>
+          <platformType>MIXIN</platformType>
           <platformType>MCP</platformType>
         </autoDetectTypes>
       </configuration>
     </facet>
   </component>
   <component name="McpModuleSettings">
-    <option name="mappingFile" value="D:\Programs\Minecraft\modSources\DeltaLib\build\createMcpToSrg\output.tsrg" />
-    <option name="mcpVersion" value="snapshot_20200425-1.15.1" />
-    <option name="minecraftVersion" value="1.15.2" />
-    <option name="srgType" value="TSRG" />
+    <option name="srgType" value="SRG" />
   </component>
 </module>
