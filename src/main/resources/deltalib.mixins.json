@@ -1,14 +1,12 @@
 {
   "required": false,
-  "package": "com.tfc.spookyautumnforests.mixin",
+  "package": "com.deltateam.deltalib.mixins",
   "compatibilityLevel": "JAVA_8",
   "refmap": "spooky_autumn_forests.refmap.json",
   "client": [
-    "ClientWorldInfoMixin",
-    "WorldTimePacketMixin"
+    "client.ArmorLayerMixin"
   ],
   "mixins": [
-    "AttackPacketMixin"
   ],
   "injectors": {
     "defaultRequire": 1

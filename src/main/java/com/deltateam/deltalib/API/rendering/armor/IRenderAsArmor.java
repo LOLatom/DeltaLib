@@ -1,4 +1,4 @@
-package com.deltateam.deltalib.API;
+package com.deltateam.deltalib.API.rendering.armor;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

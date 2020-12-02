@@ -1,6 +1,6 @@
 package com.deltateam.deltalib.mixins.client;
 
-import com.deltateam.deltalib.API.IRenderAsArmor;
+import com.deltateam.deltalib.API.rendering.armor.IRenderAsArmor;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
