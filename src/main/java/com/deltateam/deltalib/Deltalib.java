@@ -12,7 +12,7 @@ public class Deltalib {
     public Deltalib() {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(EntityOverlayer::onRenderEntity);
-        if (!FMLEnvironment.production) MinecraftForge.EVENT_BUS.addListener(this::testingStuffs);
+//        if (!FMLEnvironment.production) MinecraftForge.EVENT_BUS.addListener(this::testingStuffs);
     }
     
     private void testingStuffs(LivingEvent.LivingUpdateEvent event) {
