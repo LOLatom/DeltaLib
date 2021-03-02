@@ -7,8 +7,8 @@
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
 loaderVersion="[28,)" #mandatory (26 is current forge version)
-license="MIT"
 # A list of mods - how many allowed here is determined by the individual mod loader
+license="MIT"
 [[mods]] #mandatory
 # The modid of the mod
 modId="deltalib" #mandatory
@@ -25,10 +25,10 @@ displayName="Deltalib" #mandatory
 # A text field displayed in the mod UI
 #credits="Thanks for this example mod goes to Java" #optional
 # A text field displayed in the mod UI
-#authors="Love, Cheese and small house plants" #optional
+authors="Th3Fr3ak,GiantLuigi4" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-
+A library mod containing helper utils for any mods by the deltateam.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 #[[dependencies.deltalib]] #optional

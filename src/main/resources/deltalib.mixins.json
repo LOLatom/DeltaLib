@@ -2,7 +2,7 @@
   "required": false,
   "package": "com.deltateam.deltalib.mixins",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "spooky_autumn_forests.refmap.json",
+  "refmap": "deltalib.refmap.json",
   "client": [
     "client.ArmorLayerMixin"
   ],

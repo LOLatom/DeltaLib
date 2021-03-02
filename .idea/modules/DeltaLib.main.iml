@@ -12,6 +12,9 @@
     </facet>
   </component>
   <component name="McpModuleSettings">
-    <option name="srgType" value="SRG" />
+    <option name="mappingFile" value="D:\Programs\Minecraft\modSources\DeltaLib_Rewrite\build\createMcpToSrg\output.tsrg" />
+    <option name="mcpVersion" value="snapshot_20200916-1.16.2" />
+    <option name="minecraftVersion" value="1.16.3" />
+    <option name="srgType" value="TSRG" />
   </component>
 </module>

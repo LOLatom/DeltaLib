@@ -1,0 +1,6 @@
+{
+  "loader": "deltalib:connected_textures",
+  "border": "deltalib:block/ctbtest",
+  "base": "deltalib:block/ctbtestbase_frame",
+  "padding": 1
+}
