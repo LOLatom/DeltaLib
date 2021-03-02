@@ -17,7 +17,7 @@ public class EntityOverlayer {
 							event.getEntity(),
 							event.getEntity().getYaw(event.getPartialRenderTick()),
 							event.getPartialRenderTick(), event.getMatrixStack(),
-							new RedirectingBuffer(event.getBuffers(),RenderType.getEntityTranslucent(location)),
+							new RedirectingBuffer(event.getBuffers(), RenderType.getEntityTranslucent(location)),
 							event.getLight()
 					);
 				}
