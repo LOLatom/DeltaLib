@@ -1,6 +1,6 @@
 {
   "loader": "deltalib:connected_textures",
   "border": "deltalib:block/ctbtest",
-  "base": "deltalib:block/ctbtestbase_frame",
+  "base": "minecraft:block/emerald_block",
   "padding": 1
 }

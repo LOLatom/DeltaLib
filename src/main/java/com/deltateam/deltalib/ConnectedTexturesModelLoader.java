@@ -107,10 +107,6 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 			ArrayList<BakedQuad> quads = new ArrayList<>();
 			ArrayList<BakeableQuad> unbakedQuads = new ArrayList<>();
 			if (side == null) return quads;
-			String base = "minecraft:block/gold_block";
-			String border = "minecraft:block/diamond_block";
-			TextureAtlasSprite baseSprite = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(new ResourceLocation(base));
-			TextureAtlasSprite borderSprite = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(new ResourceLocation(border));
 			ModelProperty<BlockPos> eastProperty = offsets.get(new BlockPos(1, 0, 0));
 			ModelProperty<BlockPos> westProperty = offsets.get(new BlockPos(-1, 0, 0));
 			ModelProperty<BlockPos> upProperty = offsets.get(new BlockPos(0, 1, 0));
