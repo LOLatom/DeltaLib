@@ -3,7 +3,7 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
-        maven { url 'https://dist.creeper.host/Sponge/maven' }
+        maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
@@ -90,7 +90,7 @@ minecraft {
 }
 
 repositories{
-    maven {url='https://dist.creeper.host/Sponge/maven'}
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
     jcenter()
     mavenCentral()
 }
@@ -134,7 +134,7 @@ jar {
     manifest {
         attributes([
                 // Existing properties here
-                "MixinConfigs": "deltalib.mixins.json"
+                    "MixinConfigs": "deltalib.mixins.json"
         ])
     }
 }
