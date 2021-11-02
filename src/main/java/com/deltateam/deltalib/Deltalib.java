@@ -1,12 +1,16 @@
 package com.deltateam.deltalib;
 
 import com.deltateam.deltalib.API.rendering.overlays.OverlayHelper;
+import com.deltateam.deltalib.API.rendering.shader.PostProcessingUtils;
+import com.deltateam.deltalib.accessors.ShaderAccessor;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.shader.Shader;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -24,10 +28,19 @@ public class Deltalib {
         modEventBus.addListener(this::registerModels);
         modEventBus.addListener(this::stitchTextures);
 //        if (!FMLEnvironment.production) MinecraftForge.EVENT_BUS.addListener(this::testingStuffs);
+        if (!FMLEnvironment.production) MinecraftForge.EVENT_BUS.addListener(this::tick);
         if (!FMLEnvironment.production) {
             DeferredTester.BLOCKS.register(modEventBus);
             DeferredTester.ITEMS.register(modEventBus);
         }
+    }
+    
+    public void tick(TickEvent.ClientTickEvent event) {
+//        if (!PostProcessingUtils.hasPass(new ResourceLocation("deltalib:blur_x"))) {
+//            Shader shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blur_x"), new ResourceLocation("minecraft:blur"));
+//            shader.getShaderManager().getShaderUniform("BlurDir").set(1, 1);
+//            shader.getShaderManager().getShaderUniform("Radius").set(1);
+//        }
     }
     
     private void testingStuffs(LivingEvent.LivingUpdateEvent event) {
