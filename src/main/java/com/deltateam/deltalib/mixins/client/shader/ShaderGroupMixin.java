@@ -81,12 +81,17 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 		
 		for (PostPass shaderUtilShader : shaderUtilShaders.values()) {
 			if (((ShaderAccessor) shaderUtilShader).getMatrix() != null) {
-				((ShaderAccessor) shaderUtilShader).setFramebufferIn(alternator);
-				if (((ShaderAccessor) shaderUtilShader).getTargetBuffer() != null) {
-					((ShaderAccessor) shaderUtilShader).setTargetBuffer(((ShaderAccessor) shaderUtilShader).getTargetBuffer());
-				} else {
+				if (((ShaderAccessor) shaderUtilShader).getSourceBuffer() != null)
+					((ShaderAccessor) shaderUtilShader).setFramebufferIn(((ShaderAccessor) shaderUtilShader).getSourceBuffer());
+				else
+					((ShaderAccessor) shaderUtilShader).setFramebufferIn(alternator);
+				
+				if (((ShaderAccessor) shaderUtilShader).getTargetBuffer() != null)
+					((ShaderAccessor) shaderUtilShader).setFramebufferOut(((ShaderAccessor) shaderUtilShader).getTargetBuffer());
+				else {
 					if (alternator == src) alternator = alt;
 					else alternator = src;
+					
 					((ShaderAccessor) shaderUtilShader).setFramebufferOut(alternator);
 				}
 				shaderUtilShader.process(tickDelta);

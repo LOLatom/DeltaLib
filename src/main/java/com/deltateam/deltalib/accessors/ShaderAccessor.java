@@ -8,5 +8,7 @@ public interface ShaderAccessor {
 	void setFramebufferIn(RenderTarget framebuffer);
 	void setTargetBuffer(RenderTarget framebuffer);
 	RenderTarget getTargetBuffer();
+	void setSourceBuffer(RenderTarget framebuffer);
+	RenderTarget getSourceBuffer();
 	Matrix4f getMatrix();
 }

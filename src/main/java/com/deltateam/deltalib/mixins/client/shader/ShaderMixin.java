@@ -11,6 +11,7 @@ public class ShaderMixin implements ShaderAccessor {
 	@Mutable @Shadow @Final public RenderTarget inTarget;
 	@Mutable @Shadow @Final public RenderTarget outTarget;
 	@Unique public RenderTarget renderTarget;
+	@Unique public RenderTarget sourceBuffer;
 	
 	@Shadow private Matrix4f shaderOrthoMatrix;
 	
@@ -32,6 +33,16 @@ public class ShaderMixin implements ShaderAccessor {
 	@Override
 	public RenderTarget getTargetBuffer() {
 		return renderTarget;
+	}
+	
+	@Override
+	public void setSourceBuffer(RenderTarget framebuffer) {
+		this.sourceBuffer = framebuffer;
+	}
+	
+	@Override
+	public RenderTarget getSourceBuffer() {
+		return sourceBuffer;
 	}
 	
 	@Override
