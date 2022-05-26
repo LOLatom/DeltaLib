@@ -6,5 +6,7 @@ import com.mojang.math.Matrix4f;
 public interface ShaderAccessor {
 	void setFramebufferOut(RenderTarget framebuffer);
 	void setFramebufferIn(RenderTarget framebuffer);
+	void setTargetBuffer(RenderTarget framebuffer);
+	RenderTarget getTargetBuffer();
 	Matrix4f getMatrix();
 }

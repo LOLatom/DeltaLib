@@ -3,7 +3,6 @@ package com.deltateam.deltalib.mixins.client.shader;
 import com.deltateam.deltalib.accessors.ShaderAccessor;
 import com.deltateam.deltalib.accessors.ShaderGroupAccessor;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.PostChain;
@@ -17,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,11 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	private int screenWidth;
 	@Shadow
 	private int screenHeight;
+	
+	@Shadow
+	@Nullable
+	protected abstract RenderTarget getRenderTarget(@org.jetbrains.annotations.Nullable String p_110050_);
+	
 	@Unique
 	HashMap<ResourceLocation, PostPass> shaderUtilShaders = new HashMap<>();
 	
@@ -77,9 +82,13 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 		for (PostPass shaderUtilShader : shaderUtilShaders.values()) {
 			if (((ShaderAccessor) shaderUtilShader).getMatrix() != null) {
 				((ShaderAccessor) shaderUtilShader).setFramebufferIn(alternator);
-				if (alternator == src) alternator = alt;
-				else alternator = src;
-				((ShaderAccessor) shaderUtilShader).setFramebufferOut(alternator);
+				if (((ShaderAccessor) shaderUtilShader).getTargetBuffer() != null) {
+					((ShaderAccessor) shaderUtilShader).setTargetBuffer(((ShaderAccessor) shaderUtilShader).getTargetBuffer());
+				} else {
+					if (alternator == src) alternator = alt;
+					else alternator = src;
+					((ShaderAccessor) shaderUtilShader).setFramebufferOut(alternator);
+				}
 				shaderUtilShader.process(tickDelta);
 			}
 		}
