@@ -2,16 +2,12 @@ package com.deltateam.deltalib.mixins.client.shader;
 
 import com.deltateam.deltalib.accessors.GameRendererAccessor;
 import com.deltateam.deltalib.accessors.ShaderGroupAccessor;
+import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderTypeBuffers;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.shader.Shader;
-import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.entity.Entity;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.client.renderer.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -32,7 +28,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 	
 	@Shadow
 	@Nullable
-	private ShaderGroup postEffect;
+	private PostChain postEffect;
 	
 	@Shadow
 	@Final
@@ -40,7 +36,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 	
 	@Shadow
 	@Final
-	private IResourceManager resourceManager;
+	private ResourceManager resourceManager;
 
 //	@Inject(at = @At(value = "TAIL"), method = "loadShaders")
 //	public void preClear(IResourceManager manager, CallbackInfo ci) {
@@ -58,18 +54,18 @@ public class GameRendererMixin implements GameRendererAccessor {
 	}
 	
 	@Inject(at = @At("TAIL"), method = "onResourceManagerReload")
-	public void postReload(IResourceManager manager, CallbackInfo ci) {
+	public void postReload(ResourceManager manager, CallbackInfo ci) {
 		postSwapShaders();
 	}
 	
 	@Inject(at = @At("TAIL"), method = "onResourceManagerReload")
-	public void postLoadShaders(IResourceManager manager, CallbackInfo ci) {
+	public void postLoadShaders(ResourceManager manager, CallbackInfo ci) {
 //		System.out.println(isShaderEnabled(new ResourceLocation("shaderutil:blur_x")));
 		onLoad();
 	}
 	
 	@Inject(at = @At("TAIL"), method = "<init>")
-	public void postLoadShaders(Minecraft mcIn, IResourceManager resourceManagerIn, RenderTypeBuffers renderTypeBuffersIn, CallbackInfo ci) {
+	public void postLoadShaders(Minecraft mcIn, ResourceManager resourceManagerIn, RenderBuffers renderTypeBuffersIn, CallbackInfo ci) {
 //		System.out.println(isShaderEnabled(new ResourceLocation("shaderutil:blur_x")));
 //		onLoad();
 	}
@@ -81,7 +77,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 			dummyEffect.close();
 		}
 		try {
-			ShaderGroup tempDummyEffect = new ShaderGroup(
+			PostChain tempDummyEffect = new PostChain(
 					this.minecraft.getTextureManager(),
 					this.resourceManager,
 					this.minecraft.getMainRenderTarget(),
@@ -143,14 +139,14 @@ public class GameRendererMixin implements GameRendererAccessor {
 			postEffect = dummyEffect;
 			effectActive = true;
 		} else {
-			HashMap<ResourceLocation, Shader> shaderMap = ((ShaderGroupAccessor) dummyEffect).getPasses();
+			HashMap<ResourceLocation, PostPass> shaderMap = ((ShaderGroupAccessor) dummyEffect).getPasses();
 			for (ResourceLocation identifier : shaderMap.keySet())
 				((ShaderGroupAccessor) postEffect).addPass(identifier, shaderMap.get(identifier));
 		}
 	}
 	
 	@Unique
-	ShaderGroup dummyEffect;
+	PostChain dummyEffect;
 	
 	@Unique
 	private static final Logger LOGGER = LogManager.getLogger("ShaderUtil");
@@ -161,8 +157,8 @@ public class GameRendererMixin implements GameRendererAccessor {
 	}
 	
 	@Override
-	public Shader addPass(ResourceLocation passId, ResourceLocation shader) {
-		Shader shader1 = null;
+	public PostPass addPass(ResourceLocation passId, ResourceLocation shader) {
+		PostPass shader1 = null;
 		try {
 			shader1 = dummyEffect.addPass(shader.toString(), minecraft.getMainRenderTarget(), minecraft.getMainRenderTarget());
 			passes.put(passId, shader1);
@@ -176,7 +172,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 			Throwable cause = err;
 			StringBuilder exception = new StringBuilder();
 			// heck you too mojang, I don't care about your stupid wrapper which consumes the actual issue
-			if (cause instanceof WorldRenderer.ShaderException || cause instanceof RuntimeException) {
+			if (cause instanceof LevelRenderer.TransparencyShaderException || cause instanceof RuntimeException) {
 				if (cause.getCause() != null) cause = cause.getCause();
 			}
 			exception.append(cause.getClass().getName()).append(" : ").append(cause.getMessage());
@@ -191,12 +187,12 @@ public class GameRendererMixin implements GameRendererAccessor {
 	}
 	
 	@Unique
-	HashMap<ResourceLocation, Shader> passes = new HashMap<>();
+	HashMap<ResourceLocation, PostPass> passes = new HashMap<>();
 	
 	@Override
 	public void removePass(ResourceLocation passId) {
 		passes.remove(passId);
-		Shader shader1 = ((ShaderGroupAccessor) dummyEffect).removePass(passId);
+		PostPass shader1 = ((ShaderGroupAccessor) dummyEffect).removePass(passId);
 		((ShaderGroupAccessor) dummyEffect).removePass(shader1);
 		shader1.close();
 		if (postEffect != dummyEffect) {
@@ -205,9 +201,9 @@ public class GameRendererMixin implements GameRendererAccessor {
 	}
 	
 	@Override
-	public Shader getPass(ResourceLocation passId) {
+	public PostPass getPass(ResourceLocation passId) {
 		passes.remove(passId);
-		Shader shader1 = ((ShaderGroupAccessor) dummyEffect).getPass(passId);
+		PostPass shader1 = ((ShaderGroupAccessor) dummyEffect).getPass(passId);
 		return shader1;
 	}
 }

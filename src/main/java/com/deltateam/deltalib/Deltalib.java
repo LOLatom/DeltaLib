@@ -1,9 +1,7 @@
 package com.deltateam.deltalib;
 
 import com.deltateam.deltalib.API.rendering.overlays.OverlayHelper;
-import com.deltateam.deltalib.API.rendering.shader.PostProcessingUtils;
-import net.minecraft.client.shader.Shader;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;

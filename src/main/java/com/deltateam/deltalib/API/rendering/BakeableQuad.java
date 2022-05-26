@@ -1,24 +1,25 @@
 package com.deltateam.deltalib.API.rendering;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 
 public class BakeableQuad {
 	private static final FaceBakery bakery = new FaceBakery();
 	
-	public Vector3d min, max;
+	public Vec3 min, max;
 	public Direction face;
 	public ResourceLocation texture;
 	
 	boolean useZasU = false;
 	boolean useZasV = false;
 	
-	public BakeableQuad(Vector3d min, Vector3d max, Direction face, ResourceLocation texture) {
+	public BakeableQuad(Vec3 min, Vec3 max, Direction face, ResourceLocation texture) {
 		this.min = min;
 		this.max = max;
 		this.face = face;
@@ -43,8 +44,8 @@ public class BakeableQuad {
 		double maxY = max.y;
 		double maxZ = max.z;
 		face = face.getOpposite();
-		this.min = new Vector3d(maxX, maxY, maxZ);
-		this.max = new Vector3d(minX, minY, minZ);
+		this.min = new Vec3(maxX, maxY, maxZ);
+		this.max = new Vec3(minX, minY, minZ);
 		return this;
 	}
 	
@@ -73,7 +74,7 @@ public class BakeableQuad {
 	public BakedQuad bake() {
 		if (face.equals(Direction.UP)) {
 			return bakery.bakeQuad(new Vector3f((float) min.x, (float) min.y, (float) min.z), new Vector3f((float) max.x, (float) max.y, (float) max.z),
-					new BlockPartFace(Direction.NORTH, 0, texture.toString(),
+					new BlockElementFace(Direction.NORTH, 0, texture.toString(),
 							new BlockFaceUV(
 									new float[]{
 											getMinU(), getMinV(),
@@ -83,13 +84,13 @@ public class BakeableQuad {
 									}, 0
 							)
 					),
-					Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(texture), face, ModelRotation.X0_Y0,
-					new BlockPartRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
+					Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture), face, BlockModelRotation.X0_Y0,
+					new BlockElementRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
 					true, new ResourceLocation("a:a")
 			);
 		} else if (face.equals(Direction.NORTH) || face.equals(Direction.EAST)) {
 			return bakery.bakeQuad(new Vector3f((float) min.x, (float) min.y, (float) min.z), new Vector3f((float) max.x, (float) max.y, (float) max.z),
-					new BlockPartFace(Direction.NORTH, 0, texture.toString(),
+					new BlockElementFace(Direction.NORTH, 0, texture.toString(),
 							new BlockFaceUV(
 									new float[]{
 											getMaxU(), 16 - getMaxV(),
@@ -99,13 +100,13 @@ public class BakeableQuad {
 									}, 0
 							)
 					),
-					Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(texture), face, ModelRotation.X0_Y0,
-					new BlockPartRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
+					Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture), face, BlockModelRotation.X0_Y0,
+					new BlockElementRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
 					true, new ResourceLocation("a:a")
 			);
 		} else {
 			return bakery.bakeQuad(new Vector3f((float) min.x, (float) min.y, (float) min.z), new Vector3f((float) max.x, (float) max.y, (float) max.z),
-					new BlockPartFace(Direction.NORTH, 0, texture.toString(),
+					new BlockElementFace(Direction.NORTH, 0, texture.toString(),
 							new BlockFaceUV(
 									new float[]{
 											getMinU(), 16 - getMaxV(),
@@ -115,8 +116,8 @@ public class BakeableQuad {
 									}, 0
 							)
 					),
-					Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(texture), face, ModelRotation.X0_Y0,
-					new BlockPartRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
+					Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture), face, BlockModelRotation.X0_Y0,
+					new BlockElementRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
 					true, new ResourceLocation("a:a")
 			);
 		}
@@ -128,8 +129,8 @@ public class BakeableQuad {
 		} else if (dir.equals(face.getOpposite())) {
 			return reverse().move(dir.getStepX() * 16, dir.getStepY() * 16, dir.getStepZ() * 16);
 		} else if (isLeft(face, dir)) {
-			min = new Vector3d(min.z, min.y, min.x);
-			max = new Vector3d(max.z, max.y, max.x);
+			min = new Vec3(min.z, min.y, min.x);
+			max = new Vec3(max.z, max.y, max.x);
 			if (face.equals(Direction.NORTH)) {
 				face = dir;
 			} else {
@@ -140,8 +141,8 @@ public class BakeableQuad {
 		} else if (isRigt(face, dir)) {
 			return rotate(dir.getOpposite()).rotate(face.getOpposite());
 		} else if (dir.equals(Direction.DOWN)) {
-			min = new Vector3d(min.y, min.z, min.x);
-			max = new Vector3d(max.y, max.z, max.x);
+			min = new Vec3(min.y, min.z, min.x);
+			max = new Vec3(max.y, max.z, max.x);
 			useZasV = !useZasV;
 			this.face = dir;
 			return this;

@@ -1,11 +1,14 @@
 package com.deltateam.deltalib.API.rendering.armor;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import com.deltateam.deltalib.RedirectingBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,9 +19,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 public interface IRenderAsArmor {
 	@OnlyIn(Dist.CLIENT)
-	void render(IRenderTypeBuffer buffer, ItemStack stack, LivingEntity entity, MatrixStack matrixStack, int packedLightIn);
-	
-	EquipmentSlotType getEquipmentSlot(ItemStack itemstack);
-	
-	<A extends BipedModel<LivingEntity>> A getArmorModel(LivingEntity entityLivingBaseIn, ItemStack itemstack, EquipmentSlotType slotIn, BipedModel modelArmor);
+	void render(MultiBufferSource buffer, ItemStack stack, LivingEntity entity, PoseStack matrixStack, int packedLightIn);
+	EquipmentSlot getEquipmentSlot(ItemStack itemstack);
+//	<A extends HumanoidModel<LivingEntity>> A getArmorModel(LivingEntity entityLivingBaseIn, ItemStack itemstack, EquipmentSlot slotIn, HumanoidModel modelArmor);
+	default void renderGlint(MultiBufferSource bufferIn, ItemStack itemstack, LivingEntity entityLivingBaseIn, PoseStack matrixStackIn, int packedLightIn) {
+		render(new RedirectingBuffer(bufferIn, RenderType.glint()), itemstack, entityLivingBaseIn, matrixStackIn, packedLightIn);
+	}
 }

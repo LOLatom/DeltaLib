@@ -1,57 +1,40 @@
 package com.deltateam.deltalib.mixins.client;
 
 import com.deltateam.deltalib.API.rendering.armor.IRenderAsArmor;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.Final;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//import net.minecraft.client.model.Model;
+//import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(BipedArmorLayer.class)
-public abstract class ArmorLayerMixin<T extends LivingEntity, M extends BipedModel<T>, A extends BipedModel<T>> {
-	@Shadow
-	protected abstract void setPartVisibility(A p_188359_1_, EquipmentSlotType p_188359_2_);
-	
-	@Shadow
-	@Final
-	private A outerModel;
-	
-	@Inject(at = @At("HEAD"), method = "renderArmorPiece")
-	public void renderArmor(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, T entityLivingBaseIn, EquipmentSlotType slotIn, int packedLightIn, A defaultModel, CallbackInfo ci) {
-		ItemStack itemstack = entityLivingBaseIn.getItemBySlot(slotIn);
-		if (itemstack.getItem() instanceof IRenderAsArmor) {
-			IRenderAsArmor armoritem = (IRenderAsArmor) itemstack.getItem();
-			if (armoritem.getEquipmentSlot(itemstack) == slotIn) {
-				A a = (A) armoritem.getArmorModel(entityLivingBaseIn, itemstack, slotIn, outerModel);
-				a = getArmorModelHook(entityLivingBaseIn, itemstack, slotIn, a);
-				if (a != null) {
-					((BipedModel) ((LayerRenderer<Entity, EntityModel<Entity>>) (Object) this).getParentModel()).copyPropertiesTo(a);
-					float limbSwing = entityLivingBaseIn.swingTime;
-					float limbSwingAmount = entityLivingBaseIn.swingTime;
-					a.prepareMobModel(entityLivingBaseIn, limbSwing, limbSwingAmount, Minecraft.getInstance().getFrameTime());
-					this.setPartVisibility(a, slotIn);
-					a.setupAnim(entityLivingBaseIn, limbSwing, limbSwingAmount, entityLivingBaseIn.tickCount, entityLivingBaseIn.yRot, entityLivingBaseIn.xRot);
-					armoritem.render(bufferIn, itemstack, entityLivingBaseIn, matrixStackIn, packedLightIn);
-				}
-			}
-			if (ci.isCancellable()) {
-				ci.cancel();
+@Mixin(HumanoidArmorLayer.class)
+public abstract class ArmorLayerMixin<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> {
+	@Inject(at = @At("TAIL"), method = "renderArmorPiece")
+	public void renderArmor(PoseStack matrixStackIn, MultiBufferSource bufferIn, T entityLivingBaseIn, EquipmentSlot slotIn, int packedLightIn, A defaultModel, CallbackInfo ci) {
+		ItemStack itemStack = entityLivingBaseIn.getItemBySlot(slotIn);
+		if (itemStack.getItem() instanceof IRenderAsArmor armorItem) {
+			if (slotIn == armorItem.getEquipmentSlot(itemStack)) {
+				armorItem.render(bufferIn, itemStack, entityLivingBaseIn, matrixStackIn, packedLightIn);
+				if (itemStack.hasFoil())
+					armorItem.renderGlint(((RenderBuffers) bufferIn).bufferSource(), itemStack, entityLivingBaseIn, matrixStackIn, packedLightIn);
 			}
 		}
 	}
-	
-	@Shadow
-	protected abstract A getArmorModelHook(T entity, ItemStack itemStack, EquipmentSlotType slot, A model);
+
+//	@Inject(at = @At("HEAD"), method = "getArmorModelHook", cancellable = true)
+//	public void preGetModel(T entity, ItemStack itemStack, EquipmentSlot slot, A model, CallbackInfoReturnable<Model> cir) {
+//		if (itemStack.getItem() instanceof IRenderAsArmor armorItem) {
+//			if (slot == armorItem.getEquipmentSlot(itemStack))
+//				cir.setReturnValue(armorItem.getArmorModel(entity, itemStack, slot, model));
+//		}
+//	}
 }

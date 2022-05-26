@@ -1,6 +1,6 @@
 package com.deltateam.deltalib.API.rendering.overlays;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

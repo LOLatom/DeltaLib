@@ -2,11 +2,11 @@ package com.deltateam.deltalib.mixins.client.shader;
 
 import com.deltateam.deltalib.accessors.ShaderAccessor;
 import com.deltateam.deltalib.accessors.ShaderGroupAccessor;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.client.shader.Shader;
-import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix4f;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.renderer.PostChain;
+import net.minecraft.client.renderer.PostPass;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,15 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mixin(ShaderGroup.class)
+@Mixin(PostChain.class)
 public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	@Shadow
 	@Final
-	private List<Shader> passes;
+	private List<PostPass> passes;
 	
 	@Shadow private Matrix4f shaderOrthoMatrix;
-	@Shadow @Final private Framebuffer screenTarget;
-	@Shadow @Final private Map<String, Framebuffer> customRenderTargets;
+	@Shadow @Final private RenderTarget screenTarget;
+	@Shadow @Final private Map<String, RenderTarget> customRenderTargets;
 	
 	@Shadow public abstract void addTempTarget(String name, int width, int height);
 	
@@ -35,7 +35,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	@Shadow
 	private int screenHeight;
 	@Unique
-	HashMap<ResourceLocation, Shader> shaderUtilShaders = new HashMap<>();
+	HashMap<ResourceLocation, PostPass> shaderUtilShaders = new HashMap<>();
 	
 	@Inject(at = @At("TAIL"), method = "process")
 	public void drawShaderUtilShaders(float tickDelta, CallbackInfo ci) {
@@ -46,7 +46,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 			addTempTarget("deltalib:foolproofing", screenWidth, screenHeight);
 		}
 		
-		Framebuffer buffer = null;
+		RenderTarget buffer = null;
 		for (String s : customRenderTargets.keySet()) {
 			buffer = customRenderTargets.get(s);
 			if (buffer != screenTarget) {
@@ -56,11 +56,11 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 //		Framebuffer alternator = defaultSizedTargets.get(0);
 //		Framebuffer src = alternator;
 //		Framebuffer alt = (alternator == mainTarget) ? mainTarget : defaultSizedTargets.get(1);
-		Framebuffer alternator = screenTarget;
-		Framebuffer src = screenTarget;
-		Framebuffer alt = buffer;
+		RenderTarget alternator = screenTarget;
+		RenderTarget src = screenTarget;
+		RenderTarget alt = buffer;
 		
-		for (Shader shaderUtilShader : shaderUtilShaders.values()) {
+		for (PostPass shaderUtilShader : shaderUtilShaders.values()) {
 			if (((ShaderAccessor)shaderUtilShader).getMatrix() != null) {
 				((ShaderAccessor) shaderUtilShader).setFramebufferOut(alternator);
 				if (alternator == src) alternator = alt;
@@ -72,7 +72,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 //		if (alternator == src) alternator = alt;
 //		else alternator = src;
 		if (alternator != alt) {
-			Shader endShader = passes.get(passes.size() - 1);
+			PostPass endShader = passes.get(passes.size() - 1);
 			endShader.process(tickDelta);
 		}
 
@@ -84,7 +84,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	public void updateDimensions(int targetsWidth, int targetsHeight, CallbackInfo ci) {
 		if (shaderUtilShaders.isEmpty()) return;
 		
-		for (Shader shaderUtilShader : shaderUtilShaders.values())
+		for (PostPass shaderUtilShader : shaderUtilShaders.values())
 			shaderUtilShader.setOrthoMatrix(shaderOrthoMatrix);
 	}
 	
@@ -92,18 +92,18 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	public void close(CallbackInfo ci) {
 		if (shaderUtilShaders.isEmpty()) return;
 		
-		for (Shader shaderUtilShader : shaderUtilShaders.values())
+		for (PostChain shaderUtilShader : shaderUtilShaders.values())
 			shaderUtilShader.close();
 		shaderUtilShaders.clear();
 	}
 	
 	@Override
-	public void addPass(ResourceLocation passId, Shader shader) {
+	public void addPass(ResourceLocation passId, PostPass shader) {
 		shaderUtilShaders.put(passId, shader);
 	}
 	
 	@Override
-	public HashMap<ResourceLocation, Shader> getPasses() {
+	public HashMap<ResourceLocation, PostPass> getPasses() {
 		return shaderUtilShaders;
 	}
 	
@@ -118,17 +118,17 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	}
 	
 	@Override
-	public Shader removePass(ResourceLocation passId) {
+	public PostPass removePass(ResourceLocation passId) {
 		return shaderUtilShaders.remove(passId);
 	}
 	
 	@Override
-	public Shader getPass(ResourceLocation passId) {
+	public PostPass getPass(ResourceLocation passId) {
 		return shaderUtilShaders.get(passId);
 	}
 	
 	@Override
-	public void removePass(Shader pass) {
+	public void removePass(PostPass pass) {
 		passes.remove(pass);
 	}
 	

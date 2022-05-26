@@ -1,17 +1,17 @@
 package com.deltateam.deltalib;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 
-public class RedirectingBuffer implements IRenderTypeBuffer {
-	private final IVertexBuilder builder;
-	public RedirectingBuffer(IRenderTypeBuffer parent, RenderType type) {
+public class RedirectingBuffer implements MultiBufferSource {
+	private final VertexConsumer builder;
+	public RedirectingBuffer(MultiBufferSource parent, RenderType type) {
 		builder = parent.getBuffer(type);
 	}
 	
 	@Override
-	public IVertexBuilder getBuffer(RenderType p_getBuffer_1_) {
+	public VertexConsumer getBuffer(RenderType p_getBuffer_1_) {
 		return builder;
 	}
 }
