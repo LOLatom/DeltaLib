@@ -3,6 +3,8 @@ package com.deltateam.deltalib.mixins.client.shader;
 import com.deltateam.deltalib.accessors.ShaderAccessor;
 import com.deltateam.deltalib.accessors.ShaderGroupAccessor;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
@@ -25,17 +27,30 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	@Final
 	private List<PostPass> passes;
 	
-	@Shadow private Matrix4f shaderOrthoMatrix;
-	@Shadow @Final private RenderTarget screenTarget;
-	@Shadow @Final private Map<String, RenderTarget> customRenderTargets;
+	@Shadow
+	private Matrix4f shaderOrthoMatrix;
+	@Shadow
+	@Final
+	private RenderTarget screenTarget;
+	@Shadow
+	@Final
+	private Map<String, RenderTarget> customRenderTargets;
 	
-	@Shadow public abstract void addTempTarget(String name, int width, int height);
+	@Shadow
+	public abstract void addTempTarget(String name, int width, int height);
 	
-	@Shadow private int screenWidth;
+	@Shadow
+	private int screenWidth;
 	@Shadow
 	private int screenHeight;
 	@Unique
 	HashMap<ResourceLocation, PostPass> shaderUtilShaders = new HashMap<>();
+	
+	@Inject(at = @At("HEAD"), method = "process")
+	public void preProcess(float tickDelta, CallbackInfo ci) {
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+	}
 	
 	@Inject(at = @At("TAIL"), method = "process")
 	public void drawShaderUtilShaders(float tickDelta, CallbackInfo ci) {
@@ -45,7 +60,6 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 			// currently; if this ever gets called, the game will likely crash
 			addTempTarget("deltalib:foolproofing", screenWidth, screenHeight);
 		}
-		
 		RenderTarget buffer = null;
 		for (String s : customRenderTargets.keySet()) {
 			buffer = customRenderTargets.get(s);
@@ -61,11 +75,11 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 		RenderTarget alt = buffer;
 		
 		for (PostPass shaderUtilShader : shaderUtilShaders.values()) {
-			if (((ShaderAccessor)shaderUtilShader).getMatrix() != null) {
-				((ShaderAccessor) shaderUtilShader).setFramebufferOut(alternator);
+			if (((ShaderAccessor) shaderUtilShader).getMatrix() != null) {
+				((ShaderAccessor) shaderUtilShader).setFramebufferIn(alternator);
 				if (alternator == src) alternator = alt;
 				else alternator = src;
-				((ShaderAccessor) shaderUtilShader).setFramebufferIn(alternator);
+				((ShaderAccessor) shaderUtilShader).setFramebufferOut(alternator);
 				shaderUtilShader.process(tickDelta);
 			}
 		}
@@ -75,7 +89,6 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 			PostPass endShader = passes.get(passes.size() - 1);
 			endShader.process(tickDelta);
 		}
-
 //		PostProcessShader endShader = passes.get(passes.size() - 1);
 //		((PostProcessShaderAccessor) endShader).setOutput(endTarg);
 	}

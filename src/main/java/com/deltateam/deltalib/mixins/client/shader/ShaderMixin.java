@@ -30,7 +30,4 @@ public class ShaderMixin implements ShaderAccessor {
 	public Matrix4f getMatrix() {
 		return shaderOrthoMatrix;
 	}
-	
-	public void uniform(float[] floats) {
-	}
 }

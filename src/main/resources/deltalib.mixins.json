@@ -4,10 +4,10 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "deltalib.refmap.json",
   "client": [
-    "client.ArmorLayerMixin"
-//    "client.shader.GameRendererMixin",
-//    "client.shader.ShaderGroupMixin",
-//    "client.shader.ShaderMixin"
+    "client.ArmorLayerMixin",
+    "client.shader.GameRendererMixin",
+    "client.shader.ShaderGroupMixin",
+    "client.shader.ShaderMixin"
   ],
   "mixins": [
   ],

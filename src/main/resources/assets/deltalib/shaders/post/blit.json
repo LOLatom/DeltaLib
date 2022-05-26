@@ -4,12 +4,12 @@
   ],
   "passes": [
     {
-      "name": "blit",
+      "name": "deltalib:blit",
       "intarget": "minecraft:main",
       "outtarget": "swap"
     },
     {
-      "name": "blit",
+      "name": "deltalib:blit",
       "intarget": "swap",
       "outtarget": "minecraft:main"
     }

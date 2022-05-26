@@ -85,7 +85,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 			);
 			tempDummyEffect.resize(this.minecraft.getWindow().getWidth(), this.minecraft.getWindow().getHeight());
 			effectActive = false;
-			postEffect = null;
+//			postEffect = null;
 			this.dummyEffect = tempDummyEffect;
 //			if (shader == null) shader = dummyEffect;
 //			((ShaderGroupAccessor) dummyEffect).setProjectionMatrix(Matrix4f.projectionMatrix(1, 1, 1, 1));

@@ -1,6 +1,11 @@
 package com.deltateam.deltalib;
 
 import com.deltateam.deltalib.API.rendering.overlays.OverlayHelper;
+import com.deltateam.deltalib.API.rendering.shader.PostProcessingUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.PostPass;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -33,10 +38,11 @@ public class Deltalib {
 	
 	public void tick(TickEvent.ClientTickEvent event) {
 //        if (!PostProcessingUtils.hasPass(new ResourceLocation("deltalib:blur_x"))) {
-//            Shader shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blur_x"), new ResourceLocation("minecraft:blur"));
-//            shader.getEffect().getUniform("BlurDir").set(1, 1);
-//            shader.getEffect().getUniform("Radius").set(1);
-//        }
+//            PostPass shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blur_x"), new ResourceLocation("minecraft:blur"));
+//            shader.getEffect().getUniform("BlurDir").set(1f, 1f);
+//			shader.getEffect().getUniform("Radius").set(1f);
+//			shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blit"), new ResourceLocation("minecraft:blit"));
+//		}
 	}
 	
 	private void testingStuffs(LivingEvent.LivingUpdateEvent event) {
@@ -50,7 +56,7 @@ public class Deltalib {
 	
 	private void registerModels(final ModelRegistryEvent event) {
 		ModelLoaderRegistry.registerLoader(new ResourceLocation("deltalib:connected_textures"), new ConnectedTexturesModelLoader());
-		System.out.println("models");
+//		System.out.println("models");
 	}
 	
 	private void stitchTextures(final TextureStitchEvent event) {
