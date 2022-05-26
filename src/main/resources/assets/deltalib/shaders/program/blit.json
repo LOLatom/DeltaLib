@@ -2,7 +2,7 @@
     "blend": {
         "func": "add",
         "srcrgb": "one",
-        "dstrgb": "one"
+        "dstrgb": "zero"
     },
     "vertex": "blit",
     "fragment": "blit",

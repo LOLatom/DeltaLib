@@ -37,9 +37,9 @@ public class Deltalib {
 	}
 	
 	public void tick(TickEvent.ClientTickEvent event) {
-//        if (!PostProcessingUtils.hasPass(new ResourceLocation("deltalib:blur_x"))) {
-//            PostPass shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blur_x"), new ResourceLocation("minecraft:blur"));
-//            shader.getEffect().getUniform("BlurDir").set(1f, 1f);
+//		if (!PostProcessingUtils.hasPass(new ResourceLocation("deltalib:blur_x"))) {
+//			PostPass shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blur_x"), new ResourceLocation("minecraft:blur"));
+//			shader.getEffect().getUniform("BlurDir").set(1f, 1f);
 //			shader.getEffect().getUniform("Radius").set(1f);
 //			shader = PostProcessingUtils.addPass(new ResourceLocation("deltalib:blit"), new ResourceLocation("minecraft:blit"));
 //		}
