@@ -10,14 +10,14 @@ public class EntityOverlayer {
 	private static boolean isRendering = false;
 	public static void onRenderEntity(RenderLivingEvent<LivingEntity, ?> event) {
 		if (event instanceof RenderLivingEvent.Post && !isRendering) {
-			if (OverlayHelper.hasOverlayForEntity(event.getEntity().getUniqueID())) {
+			if (OverlayHelper.hasOverlayForEntity(event.getEntity().getUUID())) {
 				isRendering = true;
-				for (ResourceLocation location : OverlayHelper.getForEntity(event.getEntity().getUniqueID())) {
+				for (ResourceLocation location : OverlayHelper.getForEntity(event.getEntity().getUUID()).toArray(new ResourceLocation[0])) {
 					event.getRenderer().render(
 							event.getEntity(),
-							event.getEntity().getYaw(event.getPartialRenderTick()),
+							event.getEntity().getViewYRot(event.getPartialRenderTick()),
 							event.getPartialRenderTick(), event.getMatrixStack(),
-							new RedirectingBuffer(event.getBuffers(), RenderType.getEntityTranslucent(location)),
+							new RedirectingBuffer(event.getBuffers(), RenderType.entityTranslucent(location)),
 							event.getLight()
 					);
 				}

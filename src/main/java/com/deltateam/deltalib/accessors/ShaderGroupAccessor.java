@@ -11,8 +11,8 @@ public interface ShaderGroupAccessor {
 	Shader removePass(ResourceLocation passId);
 	void removePass(Shader pass);
 	void removeLast();
-	void setProjectionMatrix(Matrix4f matrix);
-	HashMap<ResourceLocation, Shader> getListShaders();
+	void setShaderOrthoMatrix(Matrix4f matrix);
+	HashMap<ResourceLocation, Shader> getPasses();
 	void clearPasses();
 	Shader getPass(ResourceLocation passId);
 }

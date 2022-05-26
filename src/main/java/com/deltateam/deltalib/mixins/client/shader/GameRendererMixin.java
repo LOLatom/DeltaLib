@@ -28,15 +28,15 @@ import java.util.HashMap;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin implements GameRendererAccessor {
 	@Shadow
-	private boolean useShader;
+	private boolean effectActive;
 	
 	@Shadow
 	@Nullable
-	private ShaderGroup shaderGroup;
+	private ShaderGroup postEffect;
 	
 	@Shadow
 	@Final
-	private Minecraft mc;
+	private Minecraft minecraft;
 	
 	@Shadow
 	@Final
@@ -47,12 +47,12 @@ public class GameRendererMixin implements GameRendererAccessor {
 //		CoreShaderRegistry.reload(manager);
 //	}
 	
-	@Inject(at = @At("HEAD"), method = "stopUseShader")
+	@Inject(at = @At("HEAD"), method = "shutdownEffect")
 	public void preDisableShaders(CallbackInfo ci) {
 		preSwapShaders();
 	}
 	
-	@Inject(at = @At("HEAD"), method = "loadShader")
+	@Inject(at = @At("HEAD"), method = "loadEffect")
 	public void preLoadShader(ResourceLocation id, CallbackInfo ci) {
 		preSwapShaders();
 	}
@@ -76,20 +76,20 @@ public class GameRendererMixin implements GameRendererAccessor {
 	
 	private void onLoad() {
 		passes.clear();
-		if (shaderGroup == dummyEffect) shaderGroup = null;
+		if (postEffect == dummyEffect) postEffect = null;
 		if (dummyEffect != null) {
 			dummyEffect.close();
 		}
 		try {
 			ShaderGroup tempDummyEffect = new ShaderGroup(
-					this.mc.getTextureManager(),
+					this.minecraft.getTextureManager(),
 					this.resourceManager,
-					this.mc.getFramebuffer(),
+					this.minecraft.getMainRenderTarget(),
 					new ResourceLocation("deltalib:shaders/post/blit.json")
 			);
-			tempDummyEffect.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
-			useShader = false;
-			shaderGroup = null;
+			tempDummyEffect.resize(this.minecraft.getWindow().getWidth(), this.minecraft.getWindow().getHeight());
+			effectActive = false;
+			postEffect = null;
 			this.dummyEffect = tempDummyEffect;
 //			if (shader == null) shader = dummyEffect;
 //			((ShaderGroupAccessor) dummyEffect).setProjectionMatrix(Matrix4f.projectionMatrix(1, 1, 1, 1));
@@ -105,47 +105,47 @@ public class GameRendererMixin implements GameRendererAccessor {
 		return passes.containsKey(passId);
 	}
 	
-	@Inject(at = @At("TAIL"), method = "loadEntityShader")
+	@Inject(at = @At("TAIL"), method = "checkEntityPostEffect")
 	public void postSetCamEntity(Entity entity, CallbackInfo ci) {
 		postSwapShaders();
 	}
 	
-	@Inject(at = @At("HEAD"), method = "loadEntityShader")
+	@Inject(at = @At("HEAD"), method = "checkEntityPostEffect")
 	public void preSetCamEntity(Entity entity, CallbackInfo ci) {
 		preSwapShaders();
 	}
 	
-	@Inject(at = @At("TAIL"), method = "stopUseShader")
+	@Inject(at = @At("TAIL"), method = "shutdownEffect")
 	public void postDisableShaders(CallbackInfo ci) {
 		postSwapShaders();
 	}
 	
-	@Inject(at = @At("TAIL"), method = "updateShaderGroupSize")
+	@Inject(at = @At("TAIL"), method = "resize")
 	public void postResize(int width, int height, CallbackInfo ci) {
 		if (dummyEffect != null)
-			dummyEffect.createBindFramebuffers(width, height);
+			dummyEffect.resize(width, height);
 	}
 	
 	@Unique
 	private void preSwapShaders() {
-		if (shaderGroup == dummyEffect) {
-			shaderGroup = null;
-			useShader = false;
+		if (postEffect == dummyEffect) {
+			postEffect = null;
+			effectActive = false;
 		} else {
-			if (shaderGroup != null)
-				((ShaderGroupAccessor) shaderGroup).clearPasses();
+			if (postEffect != null)
+				((ShaderGroupAccessor) postEffect).clearPasses();
 		}
 	}
 	
 	@Unique
 	private void postSwapShaders() {
-		if (shaderGroup == null) {
-			shaderGroup = dummyEffect;
-			useShader = true;
+		if (postEffect == null) {
+			postEffect = dummyEffect;
+			effectActive = true;
 		} else {
-			HashMap<ResourceLocation, Shader> shaderMap = ((ShaderGroupAccessor) dummyEffect).getListShaders();
+			HashMap<ResourceLocation, Shader> shaderMap = ((ShaderGroupAccessor) dummyEffect).getPasses();
 			for (ResourceLocation identifier : shaderMap.keySet())
-				((ShaderGroupAccessor) shaderGroup).addPass(identifier, shaderMap.get(identifier));
+				((ShaderGroupAccessor) postEffect).addPass(identifier, shaderMap.get(identifier));
 		}
 	}
 	
@@ -164,12 +164,12 @@ public class GameRendererMixin implements GameRendererAccessor {
 	public Shader addPass(ResourceLocation passId, ResourceLocation shader) {
 		Shader shader1 = null;
 		try {
-			shader1 = dummyEffect.addShader(shader.toString(), mc.getFramebuffer(), mc.getFramebuffer());
+			shader1 = dummyEffect.addPass(shader.toString(), minecraft.getMainRenderTarget(), minecraft.getMainRenderTarget());
 			passes.put(passId, shader1);
 			if (shader1 != null) {
 				((ShaderGroupAccessor) dummyEffect).addPass(passId, shader1);
-				if (this.shaderGroup != null && this.shaderGroup != dummyEffect)
-					((ShaderGroupAccessor) this.shaderGroup).addPass(passId, shader1);
+				if (this.postEffect != null && this.postEffect != dummyEffect)
+					((ShaderGroupAccessor) this.postEffect).addPass(passId, shader1);
 			}
 			((ShaderGroupAccessor) dummyEffect).removeLast();
 		} catch (Throwable err) {
@@ -185,7 +185,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 			LOGGER.error(exception.toString());
 		}
 		
-		dummyEffect.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
+		dummyEffect.resize(this.minecraft.getWindow().getWidth(), this.minecraft.getWindow().getHeight());
 		
 		return shader1;
 	}
@@ -199,7 +199,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 		Shader shader1 = ((ShaderGroupAccessor) dummyEffect).removePass(passId);
 		((ShaderGroupAccessor) dummyEffect).removePass(shader1);
 		shader1.close();
-		if (shaderGroup != dummyEffect) {
+		if (postEffect != dummyEffect) {
 			shader1 = ((ShaderGroupAccessor) dummyEffect).removePass(passId);
 		}
 	}

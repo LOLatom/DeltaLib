@@ -23,41 +23,41 @@ import java.util.Map;
 public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	@Shadow
 	@Final
-	private List<Shader> listShaders;
+	private List<Shader> passes;
 	
-	@Shadow private Matrix4f projectionMatrix;
-	@Shadow @Final private Framebuffer mainFramebuffer;
-	@Shadow @Final private Map<String, Framebuffer> mapFramebuffers;
+	@Shadow private Matrix4f shaderOrthoMatrix;
+	@Shadow @Final private Framebuffer screenTarget;
+	@Shadow @Final private Map<String, Framebuffer> customRenderTargets;
 	
-	@Shadow public abstract void addFramebuffer(String name, int width, int height);
+	@Shadow public abstract void addTempTarget(String name, int width, int height);
 	
-	@Shadow private int mainFramebufferWidth;
+	@Shadow private int screenWidth;
 	@Shadow
-	private int mainFramebufferHeight;
+	private int screenHeight;
 	@Unique
 	HashMap<ResourceLocation, Shader> shaderUtilShaders = new HashMap<>();
 	
-	@Inject(at = @At("TAIL"), method = "render")
+	@Inject(at = @At("TAIL"), method = "process")
 	public void drawShaderUtilShaders(float tickDelta, CallbackInfo ci) {
 		if (shaderUtilShaders.isEmpty()) return;
 		
-		if (mapFramebuffers.isEmpty()) {
+		if (customRenderTargets.isEmpty()) {
 			// currently; if this ever gets called, the game will likely crash
-			addFramebuffer("deltalib:foolproofing", mainFramebufferWidth, mainFramebufferHeight);
+			addTempTarget("deltalib:foolproofing", screenWidth, screenHeight);
 		}
 		
 		Framebuffer buffer = null;
-		for (String s : mapFramebuffers.keySet()) {
-			buffer = mapFramebuffers.get(s);
-			if (buffer != mainFramebuffer) {
+		for (String s : customRenderTargets.keySet()) {
+			buffer = customRenderTargets.get(s);
+			if (buffer != screenTarget) {
 				break;
 			}
 		}
 //		Framebuffer alternator = defaultSizedTargets.get(0);
 //		Framebuffer src = alternator;
 //		Framebuffer alt = (alternator == mainTarget) ? mainTarget : defaultSizedTargets.get(1);
-		Framebuffer alternator = mainFramebuffer;
-		Framebuffer src = mainFramebuffer;
+		Framebuffer alternator = screenTarget;
+		Framebuffer src = screenTarget;
 		Framebuffer alt = buffer;
 		
 		for (Shader shaderUtilShader : shaderUtilShaders.values()) {
@@ -66,26 +66,26 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 				if (alternator == src) alternator = alt;
 				else alternator = src;
 				((ShaderAccessor) shaderUtilShader).setFramebufferIn(alternator);
-				shaderUtilShader.render(tickDelta);
+				shaderUtilShader.process(tickDelta);
 			}
 		}
 //		if (alternator == src) alternator = alt;
 //		else alternator = src;
 		if (alternator != alt) {
-			Shader endShader = listShaders.get(listShaders.size() - 1);
-			endShader.render(tickDelta);
+			Shader endShader = passes.get(passes.size() - 1);
+			endShader.process(tickDelta);
 		}
 
 //		PostProcessShader endShader = passes.get(passes.size() - 1);
 //		((PostProcessShaderAccessor) endShader).setOutput(endTarg);
 	}
 	
-	@Inject(at = @At("TAIL"), method = "createBindFramebuffers")
+	@Inject(at = @At("TAIL"), method = "resize")
 	public void updateDimensions(int targetsWidth, int targetsHeight, CallbackInfo ci) {
 		if (shaderUtilShaders.isEmpty()) return;
 		
 		for (Shader shaderUtilShader : shaderUtilShaders.values())
-			shaderUtilShader.setProjectionMatrix(projectionMatrix);
+			shaderUtilShader.setOrthoMatrix(shaderOrthoMatrix);
 	}
 	
 	@Inject(at = @At("TAIL"), method = "close")
@@ -103,7 +103,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	}
 	
 	@Override
-	public HashMap<ResourceLocation, Shader> getListShaders() {
+	public HashMap<ResourceLocation, Shader> getPasses() {
 		return shaderUtilShaders;
 	}
 	
@@ -114,7 +114,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	
 	@Override
 	public void removeLast() {
-		listShaders.remove(listShaders.size() - 1);
+		passes.remove(passes.size() - 1);
 	}
 	
 	@Override
@@ -129,11 +129,11 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	
 	@Override
 	public void removePass(Shader pass) {
-		listShaders.remove(pass);
+		passes.remove(pass);
 	}
 	
 	@Override
-	public void setProjectionMatrix(Matrix4f matrix) {
-		this.projectionMatrix = matrix;
+	public void setShaderOrthoMatrix(Matrix4f matrix) {
+		this.shaderOrthoMatrix = matrix;
 	}
 }

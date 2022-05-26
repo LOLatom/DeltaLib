@@ -22,24 +22,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BipedArmorLayer.class)
 public abstract class ArmorLayerMixin<T extends LivingEntity, M extends BipedModel<T>, A extends BipedModel<T>> {
 	@Shadow
-	@Final
-	protected A modelArmor;
+	protected abstract void setPartVisibility(A p_188359_1_, EquipmentSlotType p_188359_2_);
 	
-	@Inject(at = @At("HEAD"), method = "func_241739_a_(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/inventory/EquipmentSlotType;ILnet/minecraft/client/renderer/entity/model/BipedModel;)V")
+	@Shadow
+	@Final
+	private A outerModel;
+	
+	@Inject(at = @At("HEAD"), method = "renderArmorPiece")
 	public void renderArmor(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, T entityLivingBaseIn, EquipmentSlotType slotIn, int packedLightIn, A defaultModel, CallbackInfo ci) {
-		ItemStack itemstack = entityLivingBaseIn.getItemStackFromSlot(slotIn);
+		ItemStack itemstack = entityLivingBaseIn.getItemBySlot(slotIn);
 		if (itemstack.getItem() instanceof IRenderAsArmor) {
 			IRenderAsArmor armoritem = (IRenderAsArmor) itemstack.getItem();
 			if (armoritem.getEquipmentSlot(itemstack) == slotIn) {
-				A a = (A) armoritem.getArmorModel((LivingEntity) entityLivingBaseIn, itemstack, slotIn, (BipedModel) modelArmor);
+				A a = (A) armoritem.getArmorModel(entityLivingBaseIn, itemstack, slotIn, outerModel);
 				a = getArmorModelHook(entityLivingBaseIn, itemstack, slotIn, a);
 				if (a != null) {
-					((BipedModel) ((LayerRenderer<Entity, EntityModel<Entity>>) (Object) this).getEntityModel()).setModelAttributes(a);
-					float limbSwing = entityLivingBaseIn.limbSwing;
-					float limbSwingAmount = entityLivingBaseIn.limbSwingAmount;
-					a.setLivingAnimations(entityLivingBaseIn, limbSwing, limbSwingAmount, Minecraft.getInstance().getRenderPartialTicks());
-					this.setModelSlotVisible(a, slotIn);
-					a.setRotationAngles(entityLivingBaseIn, limbSwing, limbSwingAmount, entityLivingBaseIn.ticksExisted, entityLivingBaseIn.rotationYaw, entityLivingBaseIn.rotationPitch);
+					((BipedModel) ((LayerRenderer<Entity, EntityModel<Entity>>) (Object) this).getParentModel()).copyPropertiesTo(a);
+					float limbSwing = entityLivingBaseIn.swingTime;
+					float limbSwingAmount = entityLivingBaseIn.swingTime;
+					a.prepareMobModel(entityLivingBaseIn, limbSwing, limbSwingAmount, Minecraft.getInstance().getFrameTime());
+					this.setPartVisibility(a, slotIn);
+					a.setupAnim(entityLivingBaseIn, limbSwing, limbSwingAmount, entityLivingBaseIn.tickCount, entityLivingBaseIn.yRot, entityLivingBaseIn.xRot);
 					armoritem.render(bufferIn, itemstack, entityLivingBaseIn, matrixStackIn, packedLightIn);
 				}
 			}
@@ -51,7 +54,4 @@ public abstract class ArmorLayerMixin<T extends LivingEntity, M extends BipedMod
 	
 	@Shadow
 	protected abstract A getArmorModelHook(T entity, ItemStack itemStack, EquipmentSlotType slot, A model);
-	
-	@Shadow
-	protected abstract void setModelSlotVisible(A modelIn, EquipmentSlotType slotIn);
 }

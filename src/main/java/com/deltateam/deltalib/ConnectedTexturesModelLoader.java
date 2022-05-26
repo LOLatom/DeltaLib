@@ -15,10 +15,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockDisplayReader;
-import net.minecraftforge.client.extensions.IForgeBakedModel;
-import net.minecraftforge.client.model.*;
+import net.minecraftforge.client.model.IModelConfiguration;
+import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
@@ -43,7 +42,7 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 		String base = modelContents.getAsJsonPrimitive("base").getAsString();
 		String border = modelContents.getAsJsonPrimitive("border").getAsString();
 		int padding = modelContents.getAsJsonPrimitive("padding").getAsInt();
-		return new ConnectedTextureGeometry(base,border, padding);
+		return new ConnectedTextureGeometry(base, border, padding);
 	}
 	
 	public static class ConnectedTextureGeometry implements IModelGeometry<ConnectedTextureGeometry> {
@@ -58,14 +57,14 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 		
 		@Override
 		public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
-			return new ConnectedTexturesModel(base,border,padding);
+			return new ConnectedTexturesModel(base, border, padding);
 		}
 		
 		@Override
 		public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
 			return ImmutableSet.of(
-					new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(base)),
-					new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(border))
+					new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(base)),
+					new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(border))
 			);
 		}
 	}
@@ -128,11 +127,11 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 				boolean westUp = !extraData.hasProperty(westUpProperty) || extraData.getData(westUpProperty) == null;
 				boolean eastDown = !extraData.hasProperty(eastDownProperty) || extraData.getData(eastDownProperty) == null;
 				boolean westDown = !extraData.hasProperty(westDownProperty) || extraData.getData(westDownProperty) == null;
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, padding, 0), new Vector3d(16 - padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 16 - padding, 0), new Vector3d(16 - padding, 16, 0), Direction.NORTH, new ResourceLocation(up ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 0, 0), new Vector3d(16 - padding, padding, 0), Direction.NORTH, new ResourceLocation(down ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, padding, 0), new Vector3d(16, 16 - padding, 0), Direction.NORTH, new ResourceLocation(east ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(0, padding, 0), new Vector3d(padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(west ? border : base)					));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, padding, 0), new Vector3d(16 - padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 16 - padding, 0), new Vector3d(16 - padding, 16, 0), Direction.NORTH, new ResourceLocation(up ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 0, 0), new Vector3d(16 - padding, padding, 0), Direction.NORTH, new ResourceLocation(down ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, padding, 0), new Vector3d(16, 16 - padding, 0), Direction.NORTH, new ResourceLocation(east ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(0, padding, 0), new Vector3d(padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(west ? border : base)));
 				if (east || up) eastUp = true;
 				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, 16 - padding, 0), new Vector3d(16, 16, 0), Direction.NORTH, new ResourceLocation(eastUp ? border : base)));
 				if (west || up) westUp = true;
@@ -151,10 +150,10 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 				boolean eastDown = !extraData.hasProperty(eastDownProperty) || extraData.getData(eastDownProperty) == null;
 				boolean westDown = !extraData.hasProperty(westDownProperty) || extraData.getData(westDownProperty) == null;
 				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, padding, 0), new Vector3d(16 - padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(base)));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 16 - padding, 0), new Vector3d(16 - padding, 16, 0), Direction.NORTH, new ResourceLocation(up ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 0, 0), new Vector3d(16 - padding, padding, 0), Direction.NORTH, new ResourceLocation(down ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, padding, 0), new Vector3d(16, 16 - padding, 0), Direction.NORTH, new ResourceLocation(south ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(0, padding, 0), new Vector3d(padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(north ? border : base)					));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 16 - padding, 0), new Vector3d(16 - padding, 16, 0), Direction.NORTH, new ResourceLocation(up ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 0, 0), new Vector3d(16 - padding, padding, 0), Direction.NORTH, new ResourceLocation(down ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, padding, 0), new Vector3d(16, 16 - padding, 0), Direction.NORTH, new ResourceLocation(south ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(0, padding, 0), new Vector3d(padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(north ? border : base)));
 				if (south || up) eastUp = true;
 				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, 16 - padding, 0), new Vector3d(16, 16, 0), Direction.NORTH, new ResourceLocation(eastUp ? border : base)));
 				if (north || up) westUp = true;
@@ -173,10 +172,10 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 				boolean eastDown = !extraData.hasProperty(eastDownProperty) || extraData.getData(eastDownProperty) == null;
 				boolean westDown = !extraData.hasProperty(westDownProperty) || extraData.getData(westDownProperty) == null;
 				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, padding, 0), new Vector3d(16 - padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(base)));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 16 - padding, 0), new Vector3d(16 - padding, 16, 0), Direction.NORTH, new ResourceLocation(east ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 0, 0), new Vector3d(16 - padding, padding, 0), Direction.NORTH, new ResourceLocation(west ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, padding, 0), new Vector3d(16, 16 - padding, 0), Direction.NORTH, new ResourceLocation(south ? border : base)					));
-				unbakedQuads.add(new BakeableQuad(new Vector3d(0, padding, 0), new Vector3d(padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(north ? border : base)					));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 16 - padding, 0), new Vector3d(16 - padding, 16, 0), Direction.NORTH, new ResourceLocation(east ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(padding, 0, 0), new Vector3d(16 - padding, padding, 0), Direction.NORTH, new ResourceLocation(west ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, padding, 0), new Vector3d(16, 16 - padding, 0), Direction.NORTH, new ResourceLocation(south ? border : base)));
+				unbakedQuads.add(new BakeableQuad(new Vector3d(0, padding, 0), new Vector3d(padding, 16 - padding, 0), Direction.NORTH, new ResourceLocation(north ? border : base)));
 				if (south || east) eastUp = true;
 				unbakedQuads.add(new BakeableQuad(new Vector3d(16 - padding, 16 - padding, 0), new Vector3d(16, 16, 0), Direction.NORTH, new ResourceLocation(eastUp ? border : base)));
 				if (north || east) westUp = true;
@@ -204,8 +203,8 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 								x != y ||
 										y != z
 						) {
-							BlockPos offset = new BlockPos(x,y,z);
-							offsets.put(offset,new ModelProperty<>((pos)->pos.equals(offset)));
+							BlockPos offset = new BlockPos(x, y, z);
+							offsets.put(offset, new ModelProperty<>((pos) -> pos.equals(offset)));
 						}
 					}
 				}
@@ -218,7 +217,7 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 			ConnectedTexturesModelData data = new ConnectedTexturesModelData();
 			for (BlockPos blockPos : offsets.keySet()) {
 				ModelProperty<BlockPos> property = offsets.get(blockPos);
-				BlockState state1 = world.getBlockState(pos.add(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+				BlockState state1 = world.getBlockState(pos.offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
 				if (state.equals(state1)) {
 					data.setData(property, blockPos);
 				}
@@ -227,37 +226,34 @@ public class ConnectedTexturesModelLoader implements IModelLoader<ConnectedTextu
 		}
 		
 		@Override
-		public boolean isAmbientOcclusion() {
+		public boolean useAmbientOcclusion() {
+			return true;
+		}
+		
+		@Override
+		public boolean usesBlockLight() {
+			return true;
+		}
+		
+		@Override
+		public boolean isCustomRenderer() {
 			return false;
 		}
 		
 		@Override
-		public boolean isGui3d() {
-			return false;
-		}
-		
-		@Override
-		public boolean isSideLit() {
-			return false;
-		}
-		
-		@Override
-		public boolean isBuiltInRenderer() {
-			return false;
-		}
-		
-		/**
-		 * @deprecated Forge: Use {@link IForgeBakedModel#getParticleTexture(IModelData)}
-		 */
-		@Override
-		public TextureAtlasSprite getParticleTexture() {
-			TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(new ResourceLocation(this.base));
+		public TextureAtlasSprite getParticleIcon() {
+			TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(new ResourceLocation(this.base));
 			return sprite;
 		}
 		
 		@Override
 		public ItemOverrideList getOverrides() {
 			return null;
+		}
+		
+		@Override
+		public boolean isGui3d() {
+			return true;
 		}
 	}
 }

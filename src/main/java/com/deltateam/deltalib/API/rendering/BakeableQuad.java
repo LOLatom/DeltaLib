@@ -83,7 +83,7 @@ public class BakeableQuad {
 									}, 0
 							)
 					),
-					Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(texture), face, ModelRotation.X0_Y0,
+					Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(texture), face, ModelRotation.X0_Y0,
 					new BlockPartRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
 					true, new ResourceLocation("a:a")
 			);
@@ -92,14 +92,14 @@ public class BakeableQuad {
 					new BlockPartFace(Direction.NORTH, 0, texture.toString(),
 							new BlockFaceUV(
 									new float[]{
-											getMaxU(), 16-getMaxV(),
-											getMinU(), 16-getMinV(),
-											getMaxU(), 16-getMinV(),
-											getMinU(), 16-getMaxV()
+											getMaxU(), 16 - getMaxV(),
+											getMinU(), 16 - getMinV(),
+											getMaxU(), 16 - getMinV(),
+											getMinU(), 16 - getMaxV()
 									}, 0
 							)
 					),
-					Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(texture), face, ModelRotation.X0_Y0,
+					Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(texture), face, ModelRotation.X0_Y0,
 					new BlockPartRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
 					true, new ResourceLocation("a:a")
 			);
@@ -108,14 +108,14 @@ public class BakeableQuad {
 					new BlockPartFace(Direction.NORTH, 0, texture.toString(),
 							new BlockFaceUV(
 									new float[]{
-											getMinU(), 16-getMaxV(),
-											getMaxU(), 16-getMinV(),
-											getMaxU(), 16-getMinV(),
-											getMinU(), 16-getMaxV()
+											getMinU(), 16 - getMaxV(),
+											getMaxU(), 16 - getMinV(),
+											getMaxU(), 16 - getMinV(),
+											getMinU(), 16 - getMaxV()
 									}, 0
 							)
 					),
-					Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(texture), face, ModelRotation.X0_Y0,
+					Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(texture), face, ModelRotation.X0_Y0,
 					new BlockPartRotation(new Vector3f(0, 0, 0), Direction.Axis.X, 0, false),
 					true, new ResourceLocation("a:a")
 			);
@@ -126,27 +126,27 @@ public class BakeableQuad {
 		if (dir.equals(face)) {
 			return this;
 		} else if (dir.equals(face.getOpposite())) {
-			return reverse().move(dir.getXOffset()*16,dir.getYOffset()*16,dir.getZOffset()*16);
-		} else if (isLeft(face,dir)) {
-			min = new Vector3d(min.z,min.y,min.x);
-			max = new Vector3d(max.z,max.y,max.x);
+			return reverse().move(dir.getStepX() * 16, dir.getStepY() * 16, dir.getStepZ() * 16);
+		} else if (isLeft(face, dir)) {
+			min = new Vector3d(min.z, min.y, min.x);
+			max = new Vector3d(max.z, max.y, max.x);
 			if (face.equals(Direction.NORTH)) {
 				face = dir;
 			} else {
-				this.face = Direction.fromAngle(dir.getHorizontalAngle() - 90);
+				this.face = Direction.fromYRot(dir.toYRot() - 90);
 			}
 			useZasU = !useZasU;
 			return this;
-		} else if (isRigt(face,dir)) {
+		} else if (isRigt(face, dir)) {
 			return rotate(dir.getOpposite()).rotate(face.getOpposite());
 		} else if (dir.equals(Direction.DOWN)) {
-			min = new Vector3d(min.y,min.z,min.x);
-			max = new Vector3d(max.y,max.z,max.x);
+			min = new Vector3d(min.y, min.z, min.x);
+			max = new Vector3d(max.y, max.z, max.x);
 			useZasV = !useZasV;
 			this.face = dir;
 			return this;
 		} else if (dir.equals(Direction.UP)) {
-			rotate(Direction.DOWN).reverse().move(0,16,0);
+			rotate(Direction.DOWN).reverse().move(0, 16, 0);
 			this.face = dir;
 			return this;
 		}
@@ -154,10 +154,10 @@ public class BakeableQuad {
 	}
 	
 	private static boolean isLeft(Direction dir1, Direction dir2) {
-		return Direction.byHorizontalIndex(dir1.getHorizontalIndex() - 1).equals(dir2);
+		return Direction.from2DDataValue(dir1.get2DDataValue() - 1).equals(dir2);
 	}
 	
 	private static boolean isRigt(Direction dir1, Direction dir2) {
-		return Direction.byHorizontalIndex(dir1.getHorizontalIndex() + 1).equals(dir2);
+		return Direction.from2DDataValue(dir1.get2DDataValue() + 1).equals(dir2);
 	}
 }
