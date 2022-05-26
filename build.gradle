@@ -126,16 +126,25 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
-//jar.finalizedBy('reobfJar')
+jar.finalizedBy('reobfJar')
 
 mixin {
     add sourceSets.main, "deltalib.refmap.json"
 }
 
-//jar {
-//    manifest {
-//        attributes([
-//                    "MixinConfigs": "deltalib.mixins.json"
-//        ])
-//    }
-//}
+jar {
+    manifest {
+        attributes([
+                    "MixinConfigs": "deltalib.mixins.json"
+        ])
+    }
+}
+
+/* thank you neca! */
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+artifacts.archives deobfJar
+/* */

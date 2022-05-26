@@ -92,7 +92,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	public void close(CallbackInfo ci) {
 		if (shaderUtilShaders.isEmpty()) return;
 		
-		for (PostChain shaderUtilShader : shaderUtilShaders.values())
+		for (PostPass shaderUtilShader : shaderUtilShaders.values())
 			shaderUtilShader.close();
 		shaderUtilShaders.clear();
 	}
