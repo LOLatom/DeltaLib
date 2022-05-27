@@ -4,7 +4,7 @@ import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface ShaderGroupAccessor {
 	void addPass(ResourceLocation passId, PostPass shader);
@@ -12,7 +12,7 @@ public interface ShaderGroupAccessor {
 	void removePass(PostPass pass);
 	void removeLast();
 	void setShaderOrthoMatrix(Matrix4f matrix);
-	HashMap<ResourceLocation, PostPass> getPasses();
+	Map<ResourceLocation, PostPass> getPasses();
 	void clearPasses();
 	PostPass getPass(ResourceLocation passId);
 }

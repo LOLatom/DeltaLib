@@ -8,6 +8,8 @@
     "client.shader.GameRendererMixin",
     "client.shader.ShaderGroupMixin",
     "client.shader.ShaderMixin"
+//    "client.MoonGlow",
+//    "client.GameRendererMixin"
   ],
   "mixins": [
   ],

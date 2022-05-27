@@ -10,5 +10,7 @@ public interface ShaderAccessor {
 	RenderTarget getTargetBuffer();
 	void setSourceBuffer(RenderTarget framebuffer);
 	RenderTarget getSourceBuffer();
+	void addAuxTarget(String  name, RenderTarget target);
+	void addDepthTarget(String glowDepth, RenderTarget mainRenderTarget);
 	Matrix4f getMatrix();
 }

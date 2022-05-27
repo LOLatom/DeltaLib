@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin implements GameRendererAccessor {
@@ -139,7 +140,7 @@ public class GameRendererMixin implements GameRendererAccessor {
 			postEffect = dummyEffect;
 			effectActive = true;
 		} else {
-			HashMap<ResourceLocation, PostPass> shaderMap = ((ShaderGroupAccessor) dummyEffect).getPasses();
+			Map<ResourceLocation, PostPass> shaderMap = ((ShaderGroupAccessor) dummyEffect).getPasses();
 			for (ResourceLocation identifier : shaderMap.keySet())
 				((ShaderGroupAccessor) postEffect).addPass(identifier, shaderMap.get(identifier));
 		}

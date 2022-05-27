@@ -5,6 +5,7 @@ import com.deltateam.deltalib.accessors.ShaderGroupAccessor;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Matrix4f;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.resources.ResourceLocation;
@@ -49,7 +50,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	protected abstract RenderTarget getRenderTarget(@org.jetbrains.annotations.Nullable String p_110050_);
 	
 	@Unique
-	HashMap<ResourceLocation, PostPass> shaderUtilShaders = new HashMap<>();
+	Map<ResourceLocation, PostPass> shaderUtilShaders = new Object2ObjectArrayMap<>();
 	
 	@Inject(at = @At("HEAD"), method = "process")
 	public void preProcess(float tickDelta, CallbackInfo ci) {
@@ -99,7 +100,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 		}
 //		if (alternator == src) alternator = alt;
 //		else alternator = src;
-		if (alternator != alt) {
+		if (alternator != src) {
 			PostPass endShader = passes.get(passes.size() - 1);
 			endShader.process(tickDelta);
 		}
@@ -130,7 +131,7 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	}
 	
 	@Override
-	public HashMap<ResourceLocation, PostPass> getPasses() {
+	public Map<ResourceLocation, PostPass> getPasses() {
 		return shaderUtilShaders;
 	}
 	
