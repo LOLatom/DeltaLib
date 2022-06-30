@@ -13,7 +13,7 @@
   </component>
   <component name="McpModuleSettings">
     <option name="mappingFile" value="D:\Programs\Minecraft\modSources\DeltaLib2\build\createMcpToSrg\output.tsrg" />
-    <option name="mcpVersion" value="official_1.18.2" />
+    <option name="mcpVersion" value="parchment_1.18.1-2022.03.06-1.18.2" />
     <option name="minecraftVersion" value="1.18.2" />
     <option name="srgType" value="TSRG" />
   </component>

@@ -31,9 +31,11 @@ public class Deltalib {
 	public Deltalib() {
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.EVENT_BUS.addListener(EntityOverlayer::onRenderEntity);
-		modEventBus.addListener(this::registerModels);
-		modEventBus.addListener(this::stitchTextures);
+		if (FMLEnvironment.dist.isClient()) {
+			MinecraftForge.EVENT_BUS.addListener(EntityOverlayer::onRenderEntity);
+			modEventBus.addListener(this::registerModels);
+			modEventBus.addListener(this::stitchTextures);
+		}
 		if (!FMLEnvironment.production) MinecraftForge.EVENT_BUS.addListener(this::testingStuffs);
 		if (!FMLEnvironment.production) MinecraftForge.EVENT_BUS.addListener(this::tick);
 		if (!FMLEnvironment.production) {
