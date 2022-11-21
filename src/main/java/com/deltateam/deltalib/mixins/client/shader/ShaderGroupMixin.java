@@ -52,11 +52,11 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	@Unique
 	Map<ResourceLocation, PostPass> shaderUtilShaders = new Object2ObjectArrayMap<>();
 	
-	@Inject(at = @At("HEAD"), method = "process")
-	public void preProcess(float tickDelta, CallbackInfo ci) {
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-	}
+//	@Inject(at = @At("HEAD"), method = "process")
+//	public void preProcess(float tickDelta, CallbackInfo ci) {
+//		RenderSystem.enableBlend();
+//		RenderSystem.defaultBlendFunc();
+//	}
 	
 	@Inject(at = @At("TAIL"), method = "process")
 	public void drawShaderUtilShaders(float tickDelta, CallbackInfo ci) {

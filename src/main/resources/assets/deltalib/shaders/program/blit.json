@@ -5,7 +5,7 @@
         "dstrgb": "one"
     },
     "vertex": "blit",
-    "fragment": "blit",
+    "fragment": "deltalib:blit",
     "attributes": [ "Position" ],
     "samplers": [
         { "name": "DiffuseSampler" }
