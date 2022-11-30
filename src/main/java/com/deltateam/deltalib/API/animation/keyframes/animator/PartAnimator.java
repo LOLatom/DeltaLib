@@ -43,6 +43,7 @@ public class PartAnimator {
             tickData.frame = current.position;
             tickData.previousTick = lastTickPos;
             tickData.last = lastPos;
+            tickData.current = new Vec3(part.x, part.y, part.z);
             tickKeyframe(posTick + Math.min(pct, 1), entity, defaultVec, tickData);
             part.x = (float) (tickData.current.x + defaultVec.x);
             part.y = (float) (tickData.current.y + defaultVec.y);
@@ -54,6 +55,7 @@ public class PartAnimator {
             tickData.frame = current.rotation;
             tickData.previousTick = lastTickRot;
             tickData.last = lastRot;
+            tickData.current = new Vec3(part.zRot, part.yRot, part.zRot);
             tickKeyframe(posTick + Math.min(pct, 1), entity, defaultVec, tickData);
             part.xRot = (float) tickData.current.x;
             part.yRot = (float) tickData.current.y;
@@ -70,7 +72,6 @@ public class PartAnimator {
         if (tickData.frame == null) return;
         if (tickData.frame.keyframeDuration == 0) {
             tickData.frame = tickData.frame.next(entity);
-            return;
         }
         
         // TODO: animation flow equalization

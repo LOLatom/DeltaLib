@@ -6,5 +6,5 @@ public interface IAnimatableObject<T, MODEL> {
 	T getObject();
 	ModelAnimator<T, MODEL> animator();
 	void setup(MODEL model);
-	boolean isSetup();
+	boolean isSetup(MODEL model);
 }
