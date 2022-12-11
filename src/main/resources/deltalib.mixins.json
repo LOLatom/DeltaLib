@@ -7,7 +7,9 @@
     "client.ArmorLayerMixin",
     "client.shader.GameRendererMixin",
     "client.shader.ShaderGroupMixin",
-    "client.shader.ShaderMixin"
+    "client.shader.ShaderMixin",
+    "client.shader.WindowMixin",
+    "client.shader.LevelRendererMixin"
 //    "client.MoonGlow",
 //    "client.GameRendererMixin"
   ],

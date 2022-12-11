@@ -16,7 +16,35 @@ public class KeyframeSequenceBuilder {
 	Int2ObjectArrayMap<Keyframe> rotations = new Int2ObjectArrayMap<>();
 	Int2ObjectArrayMap<Keyframe> scales = new Int2ObjectArrayMap<>();
 	
-	// TODO: looping logic
+	boolean loopPosition;
+	Integer loopPointPosition;
+	
+	public KeyframeSequenceBuilder enablePositionLoop() {
+		loopRotation = true;
+		return this;
+	}
+	
+	public KeyframeSequenceBuilder loopPositionToHere() {
+		SortedSet<Integer> sortedTimestamps = new TreeSet<>(positions.keySet());
+		for (Integer sortedTimestamp : sortedTimestamps)
+			loopPointRotation = sortedTimestamp;
+		return this;
+	}
+	
+	boolean loopRotation;
+	Integer loopPointRotation;
+	
+	public KeyframeSequenceBuilder enableRotationLoop() {
+		loopRotation = true;
+		return this;
+	}
+	
+	public KeyframeSequenceBuilder loopRotationToHere() {
+		SortedSet<Integer> sortedTimestamps = new TreeSet<>(positions.keySet());
+		for (Integer sortedTimestamp : sortedTimestamps)
+			loopPointRotation = sortedTimestamp;
+		return this;
+	}
 	
 	public KeyframeSequenceBuilder addPosition(int timestamp, Vec3 position) {
 		positions.put(timestamp, new BasicKeyframe(null, null, position, 0));
@@ -44,20 +72,28 @@ public class KeyframeSequenceBuilder {
 			Keyframe first = null;
 			Keyframe current = null;
 			Keyframe last = null;
+			
+			Keyframe loopTo = null;
+			
 			for (Integer sortedTimestamp : sortedTimestamps) {
 				Keyframe keyframe = positions.get((int) sortedTimestamp);
 				keyframe.keyframeDuration = sortedTimestamp - previous;
 				keyframe.prevframe = current;
 				if (first == null) first = current = keyframe;
 				else current = current.nextframe = keyframe;
+				
+				// loop handling
+				if (loopPosition) {
+					if (loopTo == null) loopTo = first;
+					if (sortedTimestamp.intValue() == loopPointPosition.intValue()) loopTo = current;
+				}
+				
 				last = keyframe;
 				previous = sortedTimestamp;
 			}
 			output.position = first;
-			last.nextframe = first;
-			first.prevframe = last;
 			
-			// TODO: looping logic
+			last.nextframe = loopTo;
 		}
 		
 		{
@@ -66,20 +102,28 @@ public class KeyframeSequenceBuilder {
 			Keyframe first = null;
 			Keyframe current = null;
 			Keyframe last = null;
+			
+			Keyframe loopTo = null;
+			
 			for (Integer sortedTimestamp : sortedTimestamps) {
 				Keyframe keyframe = rotations.get((int) sortedTimestamp);
 				keyframe.keyframeDuration = sortedTimestamp - previous;
 				keyframe.prevframe = current;
 				if (first == null) first = current = keyframe;
 				else current = current.nextframe = keyframe;
+				
+				// loop handling
+				if (loopRotation) {
+					if (loopTo == null) loopTo = first;
+					if (sortedTimestamp.intValue() == loopPointRotation.intValue()) loopTo = current;
+				}
+				
 				last = keyframe;
 				previous = sortedTimestamp;
 			}
 			output.rotation = first;
-			last.nextframe = first;
-			first.prevframe = last;
 			
-			// TODO: looping logic
+			last.nextframe = loopTo;
 		}
 		
 		return output.toImmutable();

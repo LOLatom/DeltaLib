@@ -1,11 +1,13 @@
 package com.deltateam.deltalib.mixins.client.shader;
 
+import com.deltateam.deltalib.ClientVars;
 import com.deltateam.deltalib.accessors.ShaderAccessor;
 import com.deltateam.deltalib.accessors.ShaderGroupAccessor;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.math.Matrix4f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +52,22 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 	
 	@Unique
 	Map<ResourceLocation, PostPass> shaderUtilShaders = new Object2ObjectArrayMap<>();
-	
+
 //	@Inject(at = @At("HEAD"), method = "process")
 //	public void preProcess(float tickDelta, CallbackInfo ci) {
 //		RenderSystem.enableBlend();
 //		RenderSystem.defaultBlendFunc();
 //	}
+	
+	RenderTarget handDepthSampler = new TextureTarget(1, 1, true, Minecraft.ON_OSX);
+	
+	@Inject(at = @At("HEAD"), method = "process")
+	public void copyDepth(float tickDelta, CallbackInfo ci) {
+		if (handDepthSampler.height != screenTarget.height || handDepthSampler.width != screenTarget.width) {
+			handDepthSampler.resize(screenTarget.width, screenTarget.height, Minecraft.ON_OSX);
+		}
+		handDepthSampler.copyDepthFrom(screenTarget);
+	}
 	
 	@Inject(at = @At("TAIL"), method = "process")
 	public void drawShaderUtilShaders(float tickDelta, CallbackInfo ci) {
@@ -82,6 +93,9 @@ public abstract class ShaderGroupMixin implements ShaderGroupAccessor {
 		
 		for (PostPass shaderUtilShader : shaderUtilShaders.values()) {
 			if (((ShaderAccessor) shaderUtilShader).getMatrix() != null) {
+				((ShaderAccessor) shaderUtilShader).addDepthTarget("TerrainDepthSampler", ClientVars.terrainDepth);
+				((ShaderAccessor) shaderUtilShader).addDepthTarget("HandDepthSampler", handDepthSampler);
+				
 				if (((ShaderAccessor) shaderUtilShader).getSourceBuffer() != null)
 					((ShaderAccessor) shaderUtilShader).setFramebufferIn(((ShaderAccessor) shaderUtilShader).getSourceBuffer());
 				else
