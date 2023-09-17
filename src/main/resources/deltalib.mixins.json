@@ -9,7 +9,8 @@
     "client.shader.ShaderGroupMixin",
     "client.shader.ShaderMixin",
     "client.shader.WindowMixin",
-    "client.shader.LevelRendererMixin"
+    "client.shader.LevelRendererMixin",
+    "client.MinecraftClassMixin"
 //    "client.MoonGlow",
 //    "client.GameRendererMixin"
   ],
